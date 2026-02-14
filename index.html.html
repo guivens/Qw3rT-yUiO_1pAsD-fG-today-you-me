@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour Toi ♥</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: #0a0505;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animation de fond avec vagues */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(ellipse at center, 
+                transparent 0%, 
+                rgba(139, 0, 0, 0.1) 20%, 
+                rgba(180, 0, 0, 0.15) 40%, 
+                rgba(139, 0, 0, 0.1) 60%, 
+                transparent 100%);
+            animation: wave-rotate 20s linear infinite;
+        }
+
+        .wave:nth-child(2) {
+            animation-duration: 25s;
+            animation-direction: reverse;
+            opacity: 0.7;
+        }
+
+        .wave:nth-child(3) {
+            animation-duration: 30s;
+            opacity: 0.5;
+        }
+
+        @keyframes wave-rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Container pour images optionnelles */
+        .image-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            max-width: 80%;
+            max-height: 60%;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+
+        .image-container.show {
+            opacity: 1;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,68,68,0.2);
+        }
+
+        /* Particules lumineuses animées */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, rgba(255,68,68,0.8) 0%, rgba(255,68,68,0) 70%);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(var(--tx)) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Écran de protection par mot de passe */
+        #password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #5b0f1c 0%, #2a0a12 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        #password-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .password-container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .password-container h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #ff4444;
+            font-weight: 500;
+        }
+
+        .password-container p {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        #password-input {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border: 2px solid rgba(255,68,68,0.3);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Cormorant Garamond', serif;
+            text-align: center;
+            width: 300px;
+            max-width: 90%;
+        }
+
+        #password-input:focus {
+            border-color: #ff4444;
+            box-shadow: 0 0 20px rgba(255,68,68,0.3);
+        }
+
+        .password-error {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-size: 1.1em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .password-error.show {
+            opacity: 1;
+        }
+
+        /* Sections principales */
+        .section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.5s ease, visibility 1.5s ease;
+            z-index: 10;
+        }
+
+        .section.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Fond dégradé pour chaque section */
+        #intro {
+            background: linear-gradient(135deg, #5b0f1c 0%, #3d0a14 50%, #2a0a12 100%);
+        }
+
+        #section1, #section2, #section3 {
+            background: radial-gradient(ellipse at center, #5b0f1c 0%, #1a0508 70%);
+        }
+
+        #before-video {
+            background: linear-gradient(180deg, #0a0505 0%, #1a0508 100%);
+        }
+
+        #video-section {
+            background: #000;
+        }
+
+        #finale {
+            background: radial-gradient(ellipse at center, #2a0a12 0%, #0a0505 100%);
+        }
+
+        /* Texte animé */
+        .text-container {
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            z-index: 100;
+        }
+
+        .animated-text {
+            font-size: clamp(1.8em, 4vw, 3.2em);
+            line-height: 1.6;
+            font-weight: 300;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .animated-text.show {
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .text-line {
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        /* Bouton élégant */
+        .continue-btn {
+            padding: 18px 50px;
+            font-size: 1.3em;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, rgba(255,68,68,0.2) 0%, rgba(255,68,68,0.1) 100%);
+            border: 2px solid rgba(255,68,68,0.4);
+            color: #ff4444;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: scale(0.9);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,68,68,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .continue-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .continue-btn:hover {
+            transform: scale(1.05);
+            border-color: #ff4444;
+            box-shadow: 0 15px 40px rgba(255,68,68,0.3);
+        }
+
+        .continue-btn.show {
+            animation: fadeInScale 1s ease forwards;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInScale {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .btn-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section vidéo */
+        /* Section vidéo */
+#video-container {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 1s ease;
+}
+
+#video-container.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#main-video {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 15px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+    border: 2px solid rgba(255,68,68,0.2);
+}
+
+/* Responsive pour mobile */
+@media (max-width: 768px) {
+    #video-container {
+        width: 95%;
+        max-width: none;
+    }
+
+    #main-video {
+        max-height: 60vh;
+        border-radius: 10px;
+    }
+}
+
+@media (orientation: portrait) {
+    #video-container {
+        width: 95%;
+    }
+
+    #main-video {
+        max-height: 50vh;
+    }
+}
+
+        /* Effet de lueur centrale */
+        .glow-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,68,68,0.15) 0%, rgba(255,68,68,0) 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .animated-text {
+                font-size: 1.6em;
+            }
+            
+            .continue-btn {
+                padding: 15px 40px;
+                font-size: 1.1em;
+            }
+
+            .password-container h2 {
+                font-size: 2em;
+            }
+
+            .password-container p {
+                font-size: 1.1em;
+            }
+        }
+
+        /* Cursor personnalisé */
+        body {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="8" fill="rgba(255,68,68,0.3)" stroke="rgba(255,68,68,0.8)" stroke-width="1"/></svg>') 10 10, auto;
+        }
+
+        .continue-btn, #password-input {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="8" fill="rgba(255,68,68,0.6)" stroke="rgba(255,68,68,1)" stroke-width="1"/></svg>') 10 10, pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Écran de mot de passe -->
+    <div id="password-screen">
+        <div class="password-container">
+            <h2>Un moment privé</h2>
+            <p>Entre le mot de passe pour continuer</p>
+            <input type="password" id="password-input" placeholder="Mot de passe" autofocus>
+            <div class="password-error" id="password-error">Mot de passe incorrect</div>
+        </div>
+    </div>
+
+    <!-- Animation de fond -->
+    <div class="background-animation">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <!-- Particules d'arrière-plan -->
+    <div class="particles" id="particles"></div>
+
+    <!-- ACTE I - INTRO -->
+    <div class="section" id="intro">
+        <div class="glow-center"></div>
+        <div class="image-container" id="intro-image"></div>
+        <div class="text-container">
+            <div class="animated-text" id="intro-text"></div>
+            <button class="continue-btn" id="intro-btn">
+                <span class="btn-text">❤️ Continuer</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ACTE II - Section 1 -->
+    <div class="section" id="section1">
+        <div class="glow-center"></div>
+        <div class="image-container" id="section1-image"></div>
+        <div class="text-container">
+            <div class="animated-text" id="section1-text"></div>
+            <button class="continue-btn" id="section1-btn">
+                <span class="btn-text">Continuer →</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ACTE II - Section 2 -->
+    <div class="section" id="section2">
+        <div class="glow-center"></div>
+        <div class="image-container" id="section2-image"></div>
+        <div class="text-container">
+            <div class="animated-text" id="section2-text"></div>
+            <button class="continue-btn" id="section2-btn">
+                <span class="btn-text">Continuer →</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ACTE II - Section 3 -->
+    <div class="section" id="section3">
+        <div class="glow-center"></div>
+        <div class="image-container" id="section3-image"></div>
+        <div class="text-container">
+            <div class="animated-text" id="section3-text"></div>
+            <button class="continue-btn" id="section3-btn">
+                <span class="btn-text">Continuer →</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ACTE III - Avant la vidéo -->
+    <div class="section" id="before-video">
+        <div class="glow-center"></div>
+        <div class="image-container" id="before-image"></div>
+        <div class="text-container">
+            <div class="animated-text" id="before-text"></div>
+            <button class="continue-btn" id="play-btn">
+                <span class="btn-text">🎥 Play</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Section vidéo -->
+    <div class="section" id="video-section">
+        <div id="video-container">
+            <video id="main-video" controls>
+                <source src="today.mp4" type="video/mp4">
+                Votre navigateur ne supporte pas la lecture vidéo.
+            </video>
+        </div>
+    </div>
+
+    <!-- Finale -->
+    <div class="section" id="finale">
+        <div class="glow-center"></div>
+        <div class="text-container">
+            <div class="animated-text" id="finale-text"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mot de passe : "amour2026" (modifiable ici)
+        const PASSWORD = "iloveyou";
+        let passwordUnlocked = false;
+
+        // ============================================
+        // POUR AJOUTER DES IMAGES (OPTIONNEL)
+        // ============================================
+        // Décommentez et modifiez selon vos besoins :
+        
+        // function showImage(sectionId, imagePath) {
+        //     const imageContainer = document.getElementById(sectionId + '-image');
+        //     imageContainer.innerHTML = `<img src="${imagePath}" alt="">`;
+        //     setTimeout(() => imageContainer.classList.add('show'), 500);
+        // }
+        
+        // Exemples d'utilisation dans les fonctions de section :
+        // showImage('intro', 'images/photo1.jpg');
+        // showImage('section1', 'images/photo2.jpg');
+        // ============================================
+
+        // Gestion du mot de passe
+        const passwordScreen = document.getElementById('password-screen');
+        const passwordInput = document.getElementById('password-input');
+        const passwordError = document.getElementById('password-error');
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        function checkPassword() {
+            if (passwordInput.value === PASSWORD) {
+                passwordUnlocked = true;
+                passwordScreen.classList.add('hidden');
+                setTimeout(() => {
+                    startExperience();
+                }, 1000);
+            } else {
+                passwordError.classList.add('show');
+                passwordInput.value = '';
+                passwordInput.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    passwordError.classList.remove('show');
+                    passwordInput.style.animation = '';
+                }, 2000);
+            }
+        }
+
+        // Animation de secousse pour mot de passe incorrect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+                20%, 40%, 60%, 80% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Création des particules
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const duration = 8 + Math.random() * 12;
+                const delay = Math.random() * 5;
+                const startX = Math.random() * 100;
+                const moveX = (Math.random() - 0.5) * 200;
+                
+                particle.style.left = `${startX}%`;
+                particle.style.setProperty('--tx', `${moveX}px`);
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // Machine à écrire pour texte animé
+        function typeWriter(element, text, speed = 50) {
+            return new Promise((resolve) => {
+                let i = 0;
+
+                function type() {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
+        // Textes pour chaque section
+        const texts = {
+            intro: [
+                { text: "J'aurais pu tout simplement t'envoyer la vidéo…", delay: 1000 },
+                { text: "Mais je suis Guivens quand meme.", delay: 1000 },
+                { text: "Alors laisse-moi te guider ainsi.", delay: 500 }
+            ],
+            section1: [
+                { text: "Il y a des milliers de personnes dans ce monde.", delay: 1000 },
+                { text: "Mais nous nous sommes rencontres...", delay: 500 }
+            ],
+            section2: [
+                { text: "Tu es devenue mon sourire préféré.", delay: 1000 },
+                { text: "Mon calme.", delay: 800 },
+            ],
+            section3: [
+                { text: "Et ca", delay: 1500 },
+                { text: "C'est la chose la plus sincère que je puisse t'offrir.", delay: 500 }
+            ],
+            before: [
+                { text: "Avant d'appuyer sur play…", delay: 1000 },
+                { text: "Promets-moi une chose.", delay: 1000 },
+                { text: "Regarde cette vidéo pleinement et avec ton cœur.", delay: 500 }
+            ],
+            finale: [
+                { text: "Aujourd'hui n'est pas seulement une Saint-Valentin.", delay: 1500 },
+                { text: "C'est un chapitre de plus avec toi.", delay: 1500 },
+                { text: "I love you.", delay: 0 }
+            ]
+        };
+
+        // Animation séquentielle de texte
+        async function animateTexts(elementId, textArray) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            element.classList.add('show'); // Ajouter la classe show pour l'animation fadeIn
+
+            for (let i = 0; i < textArray.length; i++) {
+                const item = textArray[i];
+                
+                // Créer un nouveau span pour chaque ligne
+                const lineSpan = document.createElement('span');
+                lineSpan.className = 'text-line';
+                element.appendChild(lineSpan);
+                
+                // Animer cette ligne
+                await typeWriter(lineSpan, item.text, 40);
+                await sleep(item.delay);
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Navigation entre sections
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            setTimeout(() => {
+                document.getElementById(sectionId).classList.add('active');
+            }, 100);
+        }
+
+        function showButton(buttonId) {
+            setTimeout(() => {
+                document.getElementById(buttonId).classList.add('show');
+            }, 500);
+        }
+
+        // Démarrage de l'expérience
+        async function startExperience() {
+            // Intro
+            showSection('intro');
+            await animateTexts('intro-text', texts.intro);
+            showButton('intro-btn');
+        }
+
+        // Bouton Intro
+        document.getElementById('intro-btn').addEventListener('click', async () => {
+            showSection('section1');
+            await animateTexts('section1-text', texts.section1);
+            showButton('section1-btn');
+        });
+
+        // Bouton Section 1
+        document.getElementById('section1-btn').addEventListener('click', async () => {
+            showSection('section2');
+            await animateTexts('section2-text', texts.section2);
+            showButton('section2-btn');
+        });
+
+        // Bouton Section 2
+        document.getElementById('section2-btn').addEventListener('click', async () => {
+            showSection('section3');
+            await animateTexts('section3-text', texts.section3);
+            showButton('section3-btn');
+        });
+
+        // Bouton Section 3
+        document.getElementById('section3-btn').addEventListener('click', async () => {
+            showSection('before-video');
+            await animateTexts('before-text', texts.before);
+            showButton('play-btn');
+        });
+
+        // Bouton Play Vidéo
+        document.getElementById('play-btn').addEventListener('click', () => {
+            showSection('video-section');
+            const videoContainer = document.getElementById('video-container');
+            const video = document.getElementById('main-video');
+            
+            setTimeout(() => {
+                videoContainer.classList.add('show');
+            }, 500);
+
+            // Détection de fin de vidéo
+            video.addEventListener('ended', async () => {
+                await sleep(1000);
+                showSection('finale');
+                await animateTexts('finale-text', texts.finale);
+            });
+        });
+    </script>
+</body>
+</html>
